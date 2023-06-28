@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+
+    node0:
+      container_name: node0
+      hostname: node0
+      image:   "tendermint/tendermint:v0.34.24" 
+      restart: always
+      ports:
+        - "26661-26662:26656-26657"
+        - "26670:26660"
+      environment:
+        - ID=0
+        - LOG=${LOG:-tendermint.log}
+      volumes:
+        - ./build_node0:/tendermint:Z
+        ### если нужно деплоить на разных машинах то требуется указать адреса
+      # extra_hosts:
+      #   - "node0:${node0_addr}"
+      #   - "node1:${node1_addr}"
+
+    node1:
+      container_name: node1
+      hostname: node1
+      image: "tendermint/tendermint:v0.34.24"
+      restart: always
+      ports:
+        - "26656-26657:26656-26657"
+        - "26671:26660"
+      environment:
+        - ID=1
+        - LOG=${LOG:-tendermint.log}
+      volumes:
+        - ./build_node1:/tendermint:Z
+      # extra_hosts:
+      #   - "node0:${node0_addr}"
+      #   - "node1:${node1_addr}"
+
+
+
+networks:
+  localnet:
+    driver: bridge
+    ipam:
+      driver: default
